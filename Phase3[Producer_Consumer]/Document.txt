@@ -1,0 +1,10 @@
+Semaphore  SemLock     Key =7
+Shared Memory for the circular Queue      Key =5
+Shared Memory for the Current Writing index     Key = 4
+Producer get wake up message from channel 80 on the consumer Queue 
+Producer also wakes up the consumer by sending a message to channel 80 on the Producer Queue
+
+
+Producer Sends a message including the size of the circular queue , on the producer queue as a message of type "7"
+Consumer receives the size of the circular queue , on the Producer queue as a message of type "7"
+
