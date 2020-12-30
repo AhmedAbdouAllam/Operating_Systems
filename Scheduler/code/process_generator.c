@@ -7,13 +7,22 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include "Process_Generator_Function.h"
-#include "headers.h"
+#include "Process_Generator_Function.c"
+#include <sys/ipc.h>
+#include <sys/msg.h>
+
 ////////////////////////////////////////////////////////////////////////////////
 
 
 int main(int argc, char * argv[])
 {
 	//signal(SIGINT, clearResources);
+// message queues parameters 
+
+
+    struct msgbuff sched_processes;
+
+////////////////////////////////////////////////////////////////	
 	struct Process* Processes=NULL;
 	int NumberOfProcesses=0;
 	
@@ -65,6 +74,19 @@ int main(int argc, char * argv[])
 		scanf("%d",&TQ);
 		printf("%d",TQ);
 	}
+	//send scheduling algorithm's parameters
+	
+	struct scheduling_Algorithm param;
+	struct algorithm_buffer algo_buff;
+	    
+	param.sched_no=c;
+	param.TimeQ=TQ;	
+	algo_buff.s=param;
+	    
+
+	
+	
+	
     // 3. Initiate and create the scheduler and clock processes.
 	// We Start the scheduler process by forking a new process and making it run it
 	int pid =fork();
@@ -87,7 +109,10 @@ int main(int argc, char * argv[])
   	
   	else if (pid == 0)
  	{ 
- 		//execl("./Scheduler.out", "Scheduler.out", NULL);
+ 	sendParameters(algo_buff);
+ 	
+ 		execl("./Scheduler.out", "Scheduler.out", NULL);
+ 		
  		exit(0);
  	}
  	
@@ -113,6 +138,9 @@ int main(int argc, char * argv[])
 				Current= getClk();
 			}
 			//Send........
+			sched_processes.p=Processes[HeadProcess];
+			sendProcess(sched_processes);
+			//////////////////
 			printf("current time is after loop %d\n", Current);
 			printf("Current Process %d\n", Processes[HeadProcess].Process_ID);
 			HeadProcess+=1;

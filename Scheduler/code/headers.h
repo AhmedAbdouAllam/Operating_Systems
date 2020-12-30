@@ -17,6 +17,47 @@ typedef short bool;
 #define false 1
 
 #define SHKEY 300
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct scheduling_Algorithm{
+
+int sched_no; // 1 for HPF  2 for SRTN  3 for RR
+int TimeQ;
+
+};
+
+
+struct algorithm_buffer
+{
+struct scheduling_Algorithm s;
+ long mtype;
+};
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct Process
+{
+	int Arrival_Time;
+	int Running_Time;
+	int Priority;
+	int Process_ID;
+
+};
+
+struct msgbuff
+{
+struct Process p;
+ long mtype;
+};
+
+struct PCB{
+
+	struct Process process;
+	int Remaining_Time;
+	int Waiting_Time;
+	int state; // 1 - running
+		   //	0- waiting
+
+};
 
 
 ///==============================
