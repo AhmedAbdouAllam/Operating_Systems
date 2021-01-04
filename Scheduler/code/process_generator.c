@@ -7,22 +7,15 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include "Process_Generator_Function.h"
-#include "Process_Generator_Function.c"
-#include <sys/ipc.h>
-#include <sys/msg.h>
-
+#include "headers.h"
 ////////////////////////////////////////////////////////////////////////////////
 
 
 int main(int argc, char * argv[])
-{
+{	//Ahmed A.Allam We need to Clean up this a little bit :D 
 	//signal(SIGINT, clearResources);
-// message queues parameters 
-
-
-    struct msgbuff sched_processes;
-
-////////////////////////////////////////////////////////////////	
+	key_t ProcessGen_Scheduler_GenKey = ftok("keyfile", 10);
+	int ProcessGen_Scheduler_Key = msgget(ProcessGen_Scheduler_GenKey, 0666 | IPC_CREAT);
 	struct Process* Processes=NULL;
 	int NumberOfProcesses=0;
 	
@@ -55,6 +48,7 @@ int main(int argc, char * argv[])
    	}
 
     //Test..........
+    printf("Number of Proceses %d\n",NumberOfProcesses);
 	for(int i=0;i<NumberOfProcesses;i++)
 	{
 	
@@ -74,84 +68,71 @@ int main(int argc, char * argv[])
 		scanf("%d",&TQ);
 		printf("%d",TQ);
 	}
-	//send scheduling algorithm's parameters
-	
-	struct scheduling_Algorithm param;
-	struct algorithm_buffer algo_buff;
-	    
-	param.sched_no=c;
-	param.TimeQ=TQ;	
-	algo_buff.s=param;
-	    
-
-	
-	
-	
     // 3. Initiate and create the scheduler and clock processes.
 	// We Start the scheduler process by forking a new process and making it run it
-	int pid =fork();
-	if (pid == -1)
+	int pid_CLK =fork();
+	if (pid_CLK == -1)
 	{
 		printf("\nFailed to Fork the Clock Process\n");	
 		
 	}  		
   	
-  	else if (pid == 0)
+  	else if (pid_CLK == 0)
  	{ 
  		execl("./CLK.out", "CLK.out", NULL);
  	}
-	pid =fork();
-	if (pid == -1)
+	
+	int pid_SCHE =fork();
+	if (pid_SCHE == -1)
 	{
 		printf("\nFailed to Fork the Scheduler Process\n");	
 		
 	}  		
   	
-  	else if (pid == 0)
+  	else if (pid_SCHE == 0)
  	{ 
- 	sendParameters(algo_buff);
- 	
- 		execl("./Scheduler.out", "Scheduler.out", NULL);
- 		
+ 		char QuantamTimeString[10];
+ 		sprintf(QuantamTimeString, "%d", TQ); 
+ 		char NumberOfProcessesString[10];
+ 		sprintf(NumberOfProcessesString, "%d", NumberOfProcesses);
+ 		char SchedulaingType[10];
+ 		sprintf(SchedulaingType, "%d", c); 	
+ 		printf("%s","Create Scheduler");
+ 		execl("./scheduler.out", "scheduler.out",SchedulaingType,QuantamTimeString,NumberOfProcessesString, NULL);
  		exit(0);
  	}
  	
- 	
+ 	printf("PID SCHE %d\n",pid_SCHE);
  	
     // 4. Use this function after creating the clock process to initialize clock
 	initClk();
     // To get time use this
     	int Current=getClk();
-   	//printf("current time is %d\n", x);
-    // TODO Generation Main Loop
-    // 5. Create a data structure for processes and provide it with its parameters.
-    // 6. Send the information to the scheduler at the appropriate time.
 	int HeadProcess=0;
+	struct msgbuff Message;
 	while(true)
-	{
-		
-		//printf("current time is %d\n", Current);	// For testing
+	{	
 		if(HeadProcess<NumberOfProcesses)
 		{
 			while(Processes[HeadProcess].Arrival_Time!=Current)
 			{
 				Current= getClk();
 			}
-			//Send........
-			sched_processes.p=Processes[HeadProcess];
-			sendProcess(sched_processes);
-			//////////////////
+		//	kill(pid_SCHE,SIGUSR1);
+			Message.Proc=Processes[HeadProcess];
+			Message.mtype=1;
+			msgsnd(ProcessGen_Scheduler_Key, &Message, sizeof(Message.Proc), !IPC_NOWAIT);
 			printf("current time is after loop %d\n", Current);
 			printf("Current Process %d\n", Processes[HeadProcess].Process_ID);
 			HeadProcess+=1;
 
 		}
-	
+	}
+    // 7. Clear clock resources
+	destroyClk(true);	
 	}
 	
-	
 
-    // 7. Clear clock resources
-	destroyClk(true);
-}
+
+
 

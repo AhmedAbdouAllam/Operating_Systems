@@ -1,12 +1,10 @@
-#include "Scheduler_Functions.h"
 #include <stdio.h> 
 #include <stdlib.h> 
-
-  
+#include "headers.h"
 // A linked list (LL) node to store a queue entry 
 struct QNode
 {
-	struct PCB process_control_block;
+	struct PCB Process_Control_Block;
 	struct QNode *next;
 	//struct node *Back;
 };
@@ -18,10 +16,10 @@ struct Queue {
 }; 
   
 // A utility function to create a new linked list node. 
-struct QNode* newNode(struct PCB p) 
+struct QNode* newNode(struct PCB P) 
 { 
     struct QNode* temp = (struct QNode*)malloc(sizeof(struct QNode)); 
-    temp->process_control_block=p; 
+    temp->Process_Control_Block = P; 
     temp->next = NULL; 
     return temp; 
 } 
@@ -35,10 +33,10 @@ struct Queue* createQueue()
 } 
   
 // The function to add a key k to q 
-void enQueue(struct Queue* q, struct PCB p) 
+void enQueue(struct Queue* q,struct PCB P) 
 { 
     // Create a new LL node 
-    struct QNode* temp = newNode( p); 
+    struct QNode* temp = newNode(P); 
   
     // If queue is empty, then new node is front and rear both 
     if (q->rear == NULL) { 
@@ -68,31 +66,4 @@ void deQueue(struct Queue* q)
         q->rear = NULL; 
   
     free(temp); 
-} 
-  
-// Driver Program to test anove functions 
-/*int main() 
-{ 
-    struct Queue* q = createQueue(); 
-    struct PCB p;
-    p.Process_ID=0;
-    struct PCB p1;
-    p1.Process_ID=1;
-    struct PCB p2;
-    p2.Process_ID=2;
-    struct PCB p3;
-    p3.Process_ID=3;
-    struct PCB p4;
-    p4.Process_ID=4;
-    enQueue(q, p); 
-    enQueue(q, p1); 
-    deQueue(q); 
-    deQueue(q); 
-    enQueue(q, p2); 
-    enQueue(q, p3); 
-    enQueue(q, p4); 
-    deQueue(q); 
-    printf("Queue Front : %d \n", q->front->process_control_block.Process_ID); 
-    printf("Queue Rear : %d", q->rear->process_control_block.Process_ID); 
-    return 0; 
-    }*/
+}

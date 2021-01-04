@@ -1,5 +1,6 @@
 #pragma once
 #include <stdio.h>      //if you don't use scanf/printf change this include
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/file.h>
@@ -14,26 +15,9 @@
 
 typedef short bool;
 #define true 1
-#define false 1
+#define false 0
 
 #define SHKEY 300
-/////////////////////////////////////////////////////////////////////////////////////////////////
-
-struct scheduling_Algorithm{
-
-int sched_no; // 1 for HPF  2 for SRTN  3 for RR
-int TimeQ;
-
-};
-
-
-struct algorithm_buffer
-{
-struct scheduling_Algorithm s;
- long mtype;
-};
-/////////////////////////////////////////////////////////////////////////////////////////////////
-
 struct Process
 {
 	int Arrival_Time;
@@ -42,24 +26,23 @@ struct Process
 	int Process_ID;
 
 };
+struct PCB
+{
+	struct Process Proc;
+	int StartTime;
+	int FinishTime;
+	int PID;
+	int LastStartTime;
+
+	// Will increase as we go on with the project but this for now .....Ahmed A.Allam
+
+}PCB;
 
 struct msgbuff
 {
-struct Process p;
- long mtype;
+    long mtype;
+    struct Process Proc;
 };
-
-struct PCB{
-
-	struct Process process;
-	int Remaining_Time;
-	int Waiting_Time;
-	int state; // 1 - running
-		   //	0- waiting
-
-};
-
-
 ///==============================
 //don't mess with this variable//
 int * shmaddr;                 //

@@ -7,13 +7,9 @@
 #include<ctype.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include "headers.h"
 
 
 
-
-
-void sendProcess( struct msgbuff temp);
-void sendParameters(struct algorithm_buffer temp);
 void clearResources(int signum);// sig handler
-
+void ProcessGeneratorMainLoop();
+void CreateChildreen(int QT,int c,int NumberOfProcesses);
