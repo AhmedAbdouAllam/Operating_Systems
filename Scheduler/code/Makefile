@@ -8,6 +8,7 @@ build:
 clean:
 	rm -f *.out  processes.txt
 	cat /dev/null > scheduler.log
+	cat /dev/null > scheduler.perf
 	
 run:
 	./process_generator.out Input.txt

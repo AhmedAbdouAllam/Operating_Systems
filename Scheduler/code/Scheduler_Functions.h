@@ -177,12 +177,18 @@
 				fwrite(outputString, 1, strlen(outputString), fptr);
 				fclose(fptr);
 			}
-			/*else
+			else
 			{	
+				FinishedProcesses+=1;
+				
+				CurrentClock=getClk();
 				WorkingProcess.FinishTime=CurrentClock;
 				int TA=WorkingProcess.FinishTime-WorkingProcess.Proc.Arrival_Time;
-				float WTA=(int)(((float)TA/WorkingProcess.totalTime)*100.0+.5);
-				WTA=(float)WTA/100.0;
+				WTATotal+=((float)TA/WorkingProcess.totalTime);
+				WaitingTotal+=WorkingProcess.waitingTime;
+				float WTA=roundf(((float)TA/WorkingProcess.totalTime)*100.0)/100.0;	
+				WTAarray = (float*) realloc(WTAarray,FinishedProcesses*sizeof(float));
+				WTAarray[FinishedProcesses-1]=WTA;
 				int rounded=roundingDecimal(WTA);
 				fptr = fopen("./scheduler.log", "a");
 				char outputString[120];
@@ -194,7 +200,7 @@
 					sprintf(outputString,"At time %d process %d finished arr %d total %d remain %d wait %d TA %d WTA %0.2f\n",CurrentClock,WorkingProcess.Proc.Process_ID,WorkingProcess.Proc.Arrival_Time,WorkingProcess.totalTime,WorkingProcess.Proc.Running_Time,WorkingProcess.waitingTime,TA,(float)WTA);
 				fwrite(outputString, 1, strlen(outputString), fptr);
 				fclose(fptr);
-			}*/
+			}
 	}
 
 	/*
@@ -210,8 +216,10 @@
 			if(ProcessorBusy==0 &&Process_PQueue->front!=NULL )	
 			{
 				WorkingProcess=Process_PQueue->front->Process_Control_Block;
-				if(WorkingProcess.FinishTime!=0)
+				if(WorkingProcess.FinishTime!=0&&WorkingProcess.FinishTime!=CurrentClock)
 					WorkingProcess.waitingTime=CurrentClock-WorkingProcess.FinishTime;
+				else if(WorkingProcess.FinishTime==CurrentClock)
+				{}
 				else
 					WorkingProcess.waitingTime=CurrentClock-WorkingProcess.Proc.Arrival_Time;
 				fptr = fopen("./scheduler.log", "a");
@@ -299,12 +307,16 @@
 				fwrite(outputString, 1, strlen(outputString), fptr);
 				fclose(fptr);
 			}
-			/*else
+			else
 			{	
+				FinishedProcesses+=1;
 				WorkingProcess.FinishTime=CurrentClock;
 				int TA=WorkingProcess.FinishTime-WorkingProcess.Proc.Arrival_Time;
-				float WTA=(int)(((float)TA/WorkingProcess.totalTime)*100.0+.5);
-				WTA=(float)WTA/100.0;
+				WTATotal+=((float)TA/WorkingProcess.totalTime);
+				WaitingTotal+=WorkingProcess.waitingTime;
+				float WTA=roundf(((float)TA/WorkingProcess.totalTime)*100.0)/100.0;	
+				WTAarray = (float*) realloc(WTAarray,FinishedProcesses*sizeof(float));
+				WTAarray[FinishedProcesses-1]=WTA;
 				int rounded=roundingDecimal(WTA);
 				fptr = fopen("./scheduler.log", "a");
 				char outputString[120];
@@ -316,7 +328,7 @@
 					sprintf(outputString,"At time %d process %d finished arr %d total %d remain %d wait %d TA %d WTA %0.2f\n",CurrentClock,WorkingProcess.Proc.Process_ID,WorkingProcess.Proc.Arrival_Time,WorkingProcess.totalTime,WorkingProcess.Proc.Running_Time,WorkingProcess.waitingTime,TA,(float)WTA);
 				fwrite(outputString, 1, strlen(outputString), fptr);
 				fclose(fptr);
-			}*/
+			}
 	}
 
 	/*
@@ -331,8 +343,10 @@
 			if(ProcessorBusy==0 &&Process_Queue->front!=NULL )	
 			{
 				WorkingProcess=Process_Queue->front->Process_Control_Block;
-				if(WorkingProcess.FinishTime!=0)
+				if(WorkingProcess.FinishTime!=0&&WorkingProcess.FinishTime!=CurrentClock)
 					WorkingProcess.waitingTime=CurrentClock-WorkingProcess.FinishTime;
+				else if(WorkingProcess.FinishTime==CurrentClock)
+				{}
 				else
 					WorkingProcess.waitingTime=CurrentClock-WorkingProcess.Proc.Arrival_Time;
 				fptr = fopen("./scheduler.log", "a");
