@@ -9,7 +9,6 @@
 #include <unistd.h>
 
 
-
 void clearResources(int signum);// sig handler
 void ProcessGeneratorMainLoop();
 void CreateChildreen(int QT,int c,int NumberOfProcesses);
